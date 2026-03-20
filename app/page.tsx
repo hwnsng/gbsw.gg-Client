@@ -13,10 +13,10 @@ export default function Home() {
   }
 
   return (
-    <div onSubmit={handleLogin} className="max-w-125 min-h-screen flex flex-col items-center justify-center p-12.5">
+    <div className="max-w-125 min-h-full flex flex-col items-center justify-center p-12.5">
       <Image src={Icons.Logo} alt="logo" width={100}/>
       <p className="text-[20px] text-[#3c3c3c] font-bold mt-7.5">경소마고 귀가/귀교 버스 탑승 관리</p>
-      <form className="w-full h-auto flex flex-col gap-10 mt-15">
+      <form onSubmit={handleLogin} className="w-full h-auto flex flex-col gap-10 mt-15">
         <div className="w-full h-auto flex flex-col justify-between">
           <p className="text-[10px] font-medium text-[#3c3c3c]">아이디</p>
           <input required value={id} onChange={e => setId(e.target.value)} type="text" className="w-full h-10 outline-none border-b border-[#d2d2d2] px-1 duration-200 focus:border-[#05A787] text-sm" />
