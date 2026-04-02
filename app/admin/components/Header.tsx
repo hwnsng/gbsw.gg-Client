@@ -22,17 +22,17 @@ export default function Header({ selected, onSelect }: { selected: Menu; onSelec
       <div className="w-full h-7.5 flex flex-row mt-5 gap-4">
         <div onClick={() => onSelect("dashboard")} className={`w-auto h-full px-2.5 flex justify-center items-center rounded-lg gap-2 cursor-pointer ${bg("dashboard")}`}>
           <ChartColumn color={color("dashboard")} size={12} />
-          <p className={`text-[12px] font-medium ${text("dashboard")}`}>대시보드</p>
+          <p className={`text-[12px] font-medium select-none ${text("dashboard")}`}>대시보드</p>
         </div>
 
         <div onClick={() => onSelect("round")} className={`w-auto h-full px-2.5 flex justify-center items-center rounded-lg gap-2 cursor-pointer ${bg("round")}`}>
           <CalendarDays color={color("round")} size={12} />
-          <p className={`text-[12px] font-medium ${text("round")}`}>회차 관리</p>
+          <p className={`text-[12px] font-medium select-none ${text("round")}`}>회차 관리</p>
         </div>
 
         <div onClick={() => onSelect("student")} className={`w-auto h-full px-2.5 flex justify-center items-center rounded-lg gap-2 cursor-pointer ${bg("student")}`}>
           <UsersRound color={color("student")} size={12} />
-          <p className={`text-[12px] font-medium ${text("student")}`}>학생 관리</p>
+          <p className={`text-[12px] font-medium select-none ${text("student")}`}>학생 관리</p>
         </div>
       </div>
     </div>
