@@ -35,7 +35,7 @@ export default function DashBoard({ onSelectBus }: Props) {
   }, []);
 
   const total = data?.total;
-  const buses = data?.buses ?? [];
+  const buses = (data?.buses ?? []).slice().sort((a, b) => a.busNumber - b.busNumber);
 
   if (loaded && !data) {
     return (
