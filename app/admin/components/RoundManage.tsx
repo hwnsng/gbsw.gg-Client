@@ -33,6 +33,12 @@ export default function RoundManage() {
   useEffect(() => { fetchRounds(); }, [fetchRounds]);
 
   const handleToggle = async (id: number, isActive: boolean) => {
+    if (!isActive) {
+      const activeRound = rounds.find(r => r.isActive && r.id !== id);
+      if (activeRound) {
+        await api.patch<ApiResponse>(`/api/schedules/${activeRound.id}/deactivate`).catch(() => {});
+      }
+    }
     const action = isActive ? 'deactivate' : 'activate';
     await api.patch<ApiResponse>(`/api/schedules/${id}/${action}`).catch(() => {});
     fetchRounds();
