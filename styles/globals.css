@@ -4,6 +4,11 @@ html, body {
   height: 100%;
 }
 
+.wrapper {
+  position: relative;
+  min-height: 100dvh;
+}
+
 body {
   margin: 0;
   padding: 0;
