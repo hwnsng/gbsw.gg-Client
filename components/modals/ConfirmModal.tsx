@@ -67,7 +67,7 @@ export default function ConfirmModal({
       {/* 딤 배경 — wrapper 기준 inset-0 */}
       <div
         className="absolute inset-0 z-40 bg-black/40 rounded-[30px] transition-opacity duration-300"
-        style={{ opacity: visible ? 1 : 0 }}
+        style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? 'auto' : 'none' }}
         onClick={handleCancel}
       />
 
