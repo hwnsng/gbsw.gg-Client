@@ -35,8 +35,8 @@ export default function LogoutModal({ onConfirm, onClose }: LogoutModalProps) {
       />
 
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] px-[25px] pt-[28px] pb-[60px] shadow-[0_-4px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out"
-        style={{ transform: `translateY(${visible ? "0%" : "100%"})` }}
+        className="fixed bottom-0 left-1/2 w-full max-w-[402px] z-50 bg-white rounded-t-[28px] px-[25px] pt-[28px] pb-[60px] shadow-[0_-4px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out"
+        style={{ transform: `translateX(-50%) translateY(${visible ? "0%" : "100%"})` }}
       >
         <div className="w-[40px] h-[4px] bg-[#D2D2D2] rounded-full mx-auto mb-[20px]" />
 
