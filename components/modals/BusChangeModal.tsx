@@ -207,6 +207,7 @@ export default function BusChangeModal({ onClose, onSuccess, scheduleType, curre
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="변경 사유를 입력해주세요"
+              aria-label="호차 변경 사유"
               className="w-full h-[100px] rounded-[14px] border border-[#D2D2D2] px-[16px] py-[12px] text-[14px] text-[#3C3C3C] resize-none outline-none focus:border-[#05A787] transition-colors"
             />
           </div>

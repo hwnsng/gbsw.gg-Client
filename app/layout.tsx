@@ -20,13 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body className={inter.className}>
         <UserProvider>
           <ToastProvider>
-            <div className="max-w-[402px] mx-auto min-h-screen">
+            <main className="max-w-[402px] mx-auto min-h-screen">
               {children}
-            </div>
+            </main>
           </ToastProvider>
         </UserProvider>
       </body>

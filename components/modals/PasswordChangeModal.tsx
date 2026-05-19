@@ -78,8 +78,9 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
 
         <div className="flex flex-col gap-[20px] mb-[28px]">
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[12px] font-medium text-[#474747]">현재 비밀번호</p>
+            <label htmlFor="current-password" className="text-[12px] font-medium text-[#474747]">현재 비밀번호</label>
             <input
+              id="current-password"
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
@@ -89,8 +90,9 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[12px] font-medium text-[#474747]">새 비밀번호</p>
+            <label htmlFor="new-password" className="text-[12px] font-medium text-[#474747]">새 비밀번호</label>
             <input
+              id="new-password"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -100,8 +102,9 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[12px] font-medium text-[#474747]">새 비밀번호 확인</p>
+            <label htmlFor="confirm-password" className="text-[12px] font-medium text-[#474747]">새 비밀번호 확인</label>
             <input
+              id="confirm-password"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

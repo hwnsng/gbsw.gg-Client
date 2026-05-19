@@ -40,13 +40,13 @@ export default function Home() {
       <p className="text-[20px] text-[#3c3c3c] font-bold mt-7.5">경소마고 귀가/귀교 버스 탑승 관리</p>
       <form onSubmit={handleLogin} className="w-full h-auto flex flex-col gap-10 mt-15">
         <div className="w-full h-auto flex flex-col justify-between">
-          <p className="text-[10px] font-medium text-[#3c3c3c]">아이디</p>
-          <input required value={id} onChange={e => setId(e.target.value)} type="text" className="w-full h-10 outline-none border-b border-[#d2d2d2] px-1 duration-200 focus:border-[#05A787] text-sm" />
+          <label htmlFor="login-id" className="text-[10px] font-medium text-[#3c3c3c]">아이디</label>
+          <input id="login-id" required value={id} onChange={e => setId(e.target.value)} type="text" className="w-full h-10 outline-none border-b border-[#d2d2d2] px-1 duration-200 focus:border-[#05A787] text-sm" />
         </div>
 
         <div className="w-full h-auto flex flex-col justify-between">
-          <p className="text-[10px] font-medium text-[#3c3c3c]">비밀번호</p>
-          <input required value={password} onChange={e => setPassword(e.target.value)} type="password" className="w-full h-10 outline-none border-b border-[#d2d2d2] px-1 duration-200 focus:border-[#05A787] text-sm" />
+          <label htmlFor="login-password" className="text-[10px] font-medium text-[#3c3c3c]">비밀번호</label>
+          <input id="login-password" required value={password} onChange={e => setPassword(e.target.value)} type="password" className="w-full h-10 outline-none border-b border-[#d2d2d2] px-1 duration-200 focus:border-[#05A787] text-sm" />
         </div>
 
         <button

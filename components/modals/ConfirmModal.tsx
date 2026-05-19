@@ -97,6 +97,7 @@ export default function ConfirmModal({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="사유를 입력하세요"
+            aria-label="미탑승 사유"
             className="w-full h-[100px] bg-[#F7F7F7] rounded-[14px] px-[16px] py-[14px] text-[14px] text-[#3C3C3C] font-medium placeholder:text-[#B0B0B0] resize-none outline-none mb-[16px]"
           />
         )}
