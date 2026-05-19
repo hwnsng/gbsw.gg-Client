@@ -2,7 +2,6 @@
 
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import api, { ApiResponse } from "@/lib/api";
 import { useToast } from "@/context/ToastContext";
 
@@ -14,19 +13,14 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
   const { showToast } = useToast();
 
   const [visible, setVisible] = useState(false);
-  const [wrapper, setWrapper] = useState<Element | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const wrapperTimer = setTimeout(() => setWrapper(document.querySelector(".wrapper")), 0);
-    const visibleTimer = setTimeout(() => setVisible(true), 10);
-    return () => {
-      clearTimeout(wrapperTimer);
-      clearTimeout(visibleTimer);
-    };
+    const timer = setTimeout(() => setVisible(true), 10);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
@@ -61,9 +55,7 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
     }
   };
 
-  if (!wrapper) return null;
-
-  return createPortal(
+  return (
     <>
       <div
         className="fixed inset-0 z-40 bg-black/40 transition-opacity duration-300"
@@ -132,7 +124,6 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
           {loading ? "변경 중..." : "변경하기"}
         </button>
       </div>
-    </>,
-    wrapper,
+    </>
   );
 }

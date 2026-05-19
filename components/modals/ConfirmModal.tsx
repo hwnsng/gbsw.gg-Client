@@ -2,7 +2,6 @@
 
 import { CheckCircle, XCircle, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 
 type ModalType = "checkin" | "absent";
 
@@ -36,17 +35,12 @@ export default function ConfirmModal({
 }: ConfirmModalProps) {
   const config = modalConfig[type];
   const [visible, setVisible] = useState(false);
-  const [wrapper, setWrapper] = useState<Element | null>(null);
   const [reason, setReason] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const wrapperTimer = setTimeout(() => setWrapper(document.querySelector(".wrapper")), 0);
-    const visibleTimer = setTimeout(() => setVisible(true), 10);
-    return () => {
-      clearTimeout(wrapperTimer);
-      clearTimeout(visibleTimer);
-    };
+    const timer = setTimeout(() => setVisible(true), 10);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCancel = () => {
@@ -60,20 +54,18 @@ export default function ConfirmModal({
     setTimeout(() => onConfirm(type === "absent" ? reason.trim() : undefined), 300);
   };
 
-  if (!wrapper) return null;
-
-  return createPortal(
+  return (
     <>
-      {/* 딤 배경 — wrapper 기준 inset-0 */}
+      {/* 딤 배경 */}
       <div
-        className="absolute inset-0 z-40 bg-black/40 rounded-[30px] transition-opacity duration-300"
+        className="fixed inset-0 z-40 bg-black/40 transition-opacity duration-300"
         style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? 'auto' : 'none' }}
         onClick={handleCancel}
       />
 
       {/* 바텀시트 — wrapper 하단 기준 */}
       <div
-        className="absolute bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] px-[25px] pt-[28px] pb-[60px] shadow-[0_-4px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] px-[25px] pt-[28px] pb-[60px] shadow-[0_-4px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out"
         style={{ transform: `translateY(${visible ? "0%" : "100%"})` }}
       >
         {/* 핸들 */}
@@ -126,7 +118,6 @@ export default function ConfirmModal({
           </button>
         </div>
       </div>
-    </>,
-    wrapper,
+    </>
   );
 }

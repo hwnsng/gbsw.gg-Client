@@ -2,7 +2,6 @@
 
 import { ArrowLeft, X, Bus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { useBus, Bus as BusType } from "@/hooks/useBus";
 import { useToast } from "@/context/ToastContext";
 import api, { ApiResponse } from "@/lib/api";
@@ -46,7 +45,6 @@ export default function BusChangeModal({ onClose, onSuccess, scheduleType, curre
   const { showToast } = useToast();
 
   const [visible, setVisible] = useState(false);
-  const [wrapper, setWrapper] = useState<Element | null>(null);
   const [step, setStep] = useState<Step>("bus");
   const [selectedBus, setSelectedBus] = useState<BusType | null>(null);
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
@@ -59,15 +57,11 @@ export default function BusChangeModal({ onClose, onSuccess, scheduleType, curre
   const allowedBusNumbers = scheduleType === "OUTBOUND" ? BUS_NUMBERS_OUTBOUND : BUS_NUMBERS_INBOUND;
 
   useEffect(() => {
-    const wrapperTimer = setTimeout(() => setWrapper(document.querySelector(".wrapper")), 0);
-    const visibleTimer = setTimeout(() => setVisible(true), 10);
+    const timer = setTimeout(() => setVisible(true), 10);
     getBuses().then((all) =>
       setBuses(all.filter((b) => allowedBusNumbers.includes(b.busNumber)))
     );
-    return () => {
-      clearTimeout(wrapperTimer);
-      clearTimeout(visibleTimer);
-    };
+    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -125,18 +119,16 @@ export default function BusChangeModal({ onClose, onSuccess, scheduleType, curre
   const showBack = step !== "bus" && step !== "success";
   const showNext = step === "bus" || step === "station";
 
-  if (!wrapper) return null;
-
-  return createPortal(
+  return (
     <>
       <div
-        className="absolute inset-0 z-40 bg-black/40 rounded-[30px] transition-opacity duration-300"
+        className="fixed inset-0 z-40 bg-black/40 transition-opacity duration-300"
         style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? 'auto' : 'none' }}
         onClick={handleClose}
       />
 
       <div
-        className="absolute bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] px-[25px] pt-[28px] pb-[60px] shadow-[0_-4px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] px-[25px] pt-[28px] pb-[60px] shadow-[0_-4px_20px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out"
         style={{ transform: `translateY(${visible ? "0%" : "100%"})` }}
       >
         <div className="w-[40px] h-[4px] bg-[#D2D2D2] rounded-full mx-auto mb-[20px]" />
@@ -275,7 +267,6 @@ export default function BusChangeModal({ onClose, onSuccess, scheduleType, curre
           </button>
         )}
       </div>
-    </>,
-    wrapper,
+    </>
   );
 }

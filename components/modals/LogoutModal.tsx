@@ -2,7 +2,6 @@
 
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 
 interface LogoutModalProps {
   onConfirm: () => void;
@@ -11,15 +10,10 @@ interface LogoutModalProps {
 
 export default function LogoutModal({ onConfirm, onClose }: LogoutModalProps) {
   const [visible, setVisible] = useState(false);
-  const [wrapper, setWrapper] = useState<Element | null>(null);
 
   useEffect(() => {
-    const wrapperTimer = setTimeout(() => setWrapper(document.querySelector(".wrapper")), 0);
-    const visibleTimer = setTimeout(() => setVisible(true), 10);
-    return () => {
-      clearTimeout(wrapperTimer);
-      clearTimeout(visibleTimer);
-    };
+    const timer = setTimeout(() => setVisible(true), 10);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
@@ -32,9 +26,7 @@ export default function LogoutModal({ onConfirm, onClose }: LogoutModalProps) {
     setTimeout(onConfirm, 300);
   };
 
-  if (!wrapper) return null;
-
-  return createPortal(
+  return (
     <>
       <div
         className="fixed inset-0 z-40 bg-black/40 transition-opacity duration-300"
@@ -74,7 +66,6 @@ export default function LogoutModal({ onConfirm, onClose }: LogoutModalProps) {
           </button>
         </div>
       </div>
-    </>,
-    wrapper,
+    </>
   );
 }
