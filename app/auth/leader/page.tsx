@@ -139,7 +139,7 @@ export default function LeaderPage() {
     <>
       {!showDashboard ? (
         /* ── Phase 1: 본인 탑승 체크 ── */
-        <div className="min-h-full flex flex-col">
+        <div className="w-full min-h-screen flex flex-col">
           <div className="bg-[#05A787] pb-[80px]">
             <StudentHeader name={name} grade={grade} classNum={classNum} number={number} onLogout={() => setLogoutOpen(true)} onChangePassword={() => setPasswordChangeOpen(true)} />
           </div>
@@ -172,7 +172,7 @@ export default function LeaderPage() {
         </div>
       ) : (
         /* ── Phase 2: 도우미 대시보드 ── */
-        <div className="min-h-full flex flex-col">
+        <div className="w-full min-h-screen flex flex-col">
           <div className="bg-[#05A787] pb-[80px]">
             <StudentHeader name={name} grade={grade} classNum={classNum} number={number} onLogout={() => setLogoutOpen(true)} onChangePassword={() => setPasswordChangeOpen(true)} />
           </div>

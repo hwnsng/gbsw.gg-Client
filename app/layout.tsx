@@ -22,7 +22,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <UserProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <div className="max-w-[402px] mx-auto min-h-screen">
+              {children}
+            </div>
+          </ToastProvider>
         </UserProvider>
       </body>
     </html>
