@@ -1,11 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import Cookies from 'js-cookie';
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_GBSW_GG_BACKEND_URL ??
-  process.env.GBSW_GG_BACKEND_URL ??
-  '';
-
 export interface ApiResponse<T = void> {
   success: boolean;
   message: string;
@@ -22,7 +17,7 @@ export const clearTokens = () => {
   Cookies.remove('refresh_token');
 };
 
-const api = axios.create({ baseURL: BASE_URL });
+const api = axios.create({ baseURL: '' });
 
 // 요청 인터셉터 — accessToken 자동 첨부
 api.interceptors.request.use((config) => {
@@ -76,7 +71,7 @@ api.interceptors.response.use(
       if (!refreshToken) throw new Error('no refresh token');
 
       const res = await axios.post<never, ApiResponse<{ accessToken: string; refreshToken: string }>>(
-        `${BASE_URL}/api/auth/refresh`,
+        '/api/auth/refresh',
         { refreshToken },
       );
 
