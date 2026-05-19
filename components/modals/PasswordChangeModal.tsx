@@ -16,6 +16,7 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 10);
@@ -28,27 +29,38 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
   };
 
   const mismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
+  const tooShort = newPassword.length > 0 && newPassword.trim().length < 4;
   const canSubmit =
     currentPassword.trim().length > 0 &&
-    newPassword.trim().length > 0 &&
+    newPassword.trim().length >= 4 &&
     newPassword === confirmPassword &&
     !loading;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
+    setSubmitError("");
     setLoading(true);
     try {
       const res = await api.patch<ApiResponse>("/api/me/password", {
         currentPassword,
         newPassword,
       });
-      if (!res.success) throw new Error(res.message);
+      if (!res.success) throw res;
       showToast("비밀번호가 변경되었습니다.", "success");
       handleClose();
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "비밀번호 변경에 실패했습니다.";
-      showToast(message, "error");
+        error instanceof Error
+          ? error.message
+          : (error as { message?: string })?.message ?? "";
+
+      if (message.includes("현재") || message.toLowerCase().includes("current")) {
+        setSubmitError("현재 비밀번호가 올바르지 않습니다.");
+      } else if (message.includes("일치") || message.toLowerCase().includes("match")) {
+        setSubmitError("새 비밀번호가 일치하지 않습니다.");
+      } else {
+        setSubmitError(message || "비밀번호 변경에 실패했습니다.");
+      }
     } finally {
       setLoading(false);
     }
@@ -79,22 +91,30 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
               id="current-password"
               type="password"
               value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
+              onChange={(e) => { setCurrentPassword(e.target.value); setSubmitError(""); }}
               placeholder="현재 비밀번호 입력"
               className="w-full h-[52px] rounded-[14px] border border-[#D2D2D2] px-[16px] text-[14px] text-[#3C3C3C] outline-none focus:border-[#05A787] transition-colors"
             />
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label htmlFor="new-password" className="text-[12px] font-medium text-[#474747]">새 비밀번호</label>
+            <label htmlFor="new-password" className="text-[12px] font-medium text-[#474747]">
+              새 비밀번호
+              <span className="ml-[6px] text-[11px] font-normal text-[#767676]">(최소 4자리)</span>
+            </label>
             <input
               id="new-password"
               type="password"
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={(e) => { setNewPassword(e.target.value); setSubmitError(""); }}
               placeholder="새 비밀번호 입력"
-              className="w-full h-[52px] rounded-[14px] border border-[#D2D2D2] px-[16px] text-[14px] text-[#3C3C3C] outline-none focus:border-[#05A787] transition-colors"
+              className={`w-full h-[52px] rounded-[14px] border px-[16px] text-[14px] text-[#3C3C3C] outline-none transition-colors ${
+                tooShort ? "border-[#EF4444]" : "border-[#D2D2D2] focus:border-[#05A787]"
+              }`}
             />
+            {tooShort && (
+              <p className="text-[11px] text-[#EF4444] font-medium">최소 4자리 이상 입력해 주세요.</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-[8px]">
@@ -103,7 +123,7 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
               id="confirm-password"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => { setConfirmPassword(e.target.value); setSubmitError(""); }}
               placeholder="새 비밀번호 재입력"
               className={`w-full h-[52px] rounded-[14px] border px-[16px] text-[14px] text-[#3C3C3C] outline-none transition-colors ${
                 mismatch ? "border-[#EF4444]" : "border-[#D2D2D2] focus:border-[#05A787]"
@@ -114,6 +134,10 @@ export default function PasswordChangeModal({ onClose }: PasswordChangeModalProp
             )}
           </div>
         </div>
+
+        {submitError && (
+          <p className="text-[12px] text-[#EF4444] font-medium text-center mb-[12px]">{submitError}</p>
+        )}
 
         <button
           onClick={handleSubmit}
