@@ -176,6 +176,7 @@ export default function StudentPage() {
                 <ActionButtons
                   onCheckIn={() => setModal("checkin")}
                   onAbsent={() => setModal("absent")}
+                  absentExpired={schedule ? new Date() > new Date(schedule.preAbsentDeadline) : false}
                 />
               )}
 

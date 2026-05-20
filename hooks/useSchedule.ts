@@ -9,6 +9,7 @@ export interface Schedule {
   type: 'OUTBOUND' | 'INBOUND';
   departAt: string;
   checkDeadline: string;
+  preAbsentDeadline: string;
   isActive: boolean;
   semester: string;
 }

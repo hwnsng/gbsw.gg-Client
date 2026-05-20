@@ -163,6 +163,7 @@ export default function LeaderPage() {
                   <ActionButtons
                     onCheckIn={() => setModal("checkin")}
                     onAbsent={() => setModal("absent")}
+                    absentExpired={schedule ? new Date() > new Date(schedule.preAbsentDeadline) : false}
                   />
                 )}
               </>
