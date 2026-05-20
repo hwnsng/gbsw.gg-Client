@@ -55,7 +55,7 @@ export default function RoundCreateForm({ onClose, onSuccess }: Props) {
 
   return (
     <div className={`fixed inset-0 z-50 flex flex-col justify-end transition-colors duration-300 ${visible ? 'bg-black/40' : 'bg-transparent'}`} onClick={close}>
-      <form onSubmit={handleSubmit} onClick={e => e.stopPropagation()} className={`w-full max-w-[402px] mx-auto max-h-[80vh] bg-white rounded-t-[30px] pt-7.5 px-7.5 flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-y-0' : 'translate-y-full'}`}>
+      <form onSubmit={handleSubmit} onClick={e => e.stopPropagation()} className={`w-full max-w-[402px] mx-auto max-h-[80vh] bg-white rounded-t-[30px] pt-7.5 px-7.5 pb-10 flex flex-col transition-transform duration-300 ease-out ${visible ? 'translate-y-0' : 'translate-y-full'}`}>
         <p className="text-[20px] text-[#3c3c3c] font-bold mb-7.5 shrink-0">회차 생성</p>
 
         <div className="flex-1 overflow-y-auto flex flex-col gap-7.5 pb-4">
@@ -112,7 +112,7 @@ export default function RoundCreateForm({ onClose, onSuccess }: Props) {
           )}
         </div>
 
-        <div className='w-full h-10 flex flex-row justify-between shrink-0 py-7.5'>
+        <div className='w-full h-10 flex flex-row justify-between shrink-0 pt-7.5'>
           <button type="button" onClick={close} className='min-w-40 h-10 flex justify-center items-center text-[12px] rounded-lg bg-[#f1f1f1] text-[#3c3c3c] cursor-pointer duration-200 hover:bg-[#d2d2d2]'>취소</button>
           <button type="submit" disabled={loading} className='min-w-40 h-10 flex justify-center items-center text-[12px] rounded-lg bg-[#02AB87] text-[#ffffff] cursor-pointer duration-200 hover:bg-[#049173] disabled:opacity-60'>{loading ? '생성 중...' : '생성하기'}</button>
         </div>
