@@ -15,9 +15,12 @@ export default function RoundCreateForm({ onClose, onSuccess }: Props) {
   const [departTime, setDepartTime] = useState('');
   const [deadlineDate, setDeadlineDate] = useState('');
   const [deadlineTime, setDeadlineTime] = useState('');
+  const [preAbsentDate, setPreAbsentDate] = useState('');
+  const [preAbsentTime, setPreAbsentTime] = useState('');
   const [semester, setSemester] = useState('');
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true));
@@ -30,6 +33,7 @@ export default function RoundCreateForm({ onClose, onSuccess }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
     setLoading(true);
     try {
       const res = await api.post<ApiResponse>('/api/schedules', {
@@ -37,11 +41,13 @@ export default function RoundCreateForm({ onClose, onSuccess }: Props) {
         type,
         departAt: `${departDate}T${departTime}:00`,
         checkDeadline: `${deadlineDate}T${deadlineTime}:00`,
+        preAbsentDeadline: `${preAbsentDate}T${preAbsentTime}:00`,
         semester,
       });
-      if (res.success) onSuccess();
-    } catch (err) {
-      console.error('회차 생성 실패:', err);
+      if (!res.success) throw new Error(res.message);
+      onSuccess();
+    } catch {
+      setSubmitError('생성에 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -89,6 +95,20 @@ export default function RoundCreateForm({ onClose, onSuccess }: Props) {
           <p className="text-[12px] font-medium text-[#474747]">탑승 확인 마감 시간 <span className="text-[#EF4444]">*</span></p>
           <input required value={deadlineTime} onChange={e => setDeadlineTime(e.target.value)} type="time" className="w-full h-10 bg-white border border-[#d2d2d2] rounded-lg outline-none px-2.5 text-[#474747] text-[14px]" />
         </div>
+
+        <div className="w-full h-auto flex flex-col gap-1">
+          <p className="text-[12px] font-medium text-[#474747]">사전 미탑승 신청 마감 날짜 <span className="text-[#EF4444]">*</span></p>
+          <input required value={preAbsentDate} onChange={e => setPreAbsentDate(e.target.value)} type="date" className="w-full h-10 bg-white border border-[#d2d2d2] rounded-lg outline-none px-2.5 text-[#474747] text-[14px]" />
+        </div>
+
+        <div className="w-full h-auto flex flex-col gap-1">
+          <p className="text-[12px] font-medium text-[#474747]">사전 미탑승 신청 마감 시간 <span className="text-[#EF4444]">*</span></p>
+          <input required value={preAbsentTime} onChange={e => setPreAbsentTime(e.target.value)} type="time" className="w-full h-10 bg-white border border-[#d2d2d2] rounded-lg outline-none px-2.5 text-[#474747] text-[14px]" />
+        </div>
+
+        {submitError && (
+          <p className="text-[12px] text-[#EF4444] font-medium text-center">{submitError}</p>
+        )}
 
         <div className='w-full h-10 flex flex-row justify-between'>
           <button type="button" onClick={close} className='min-w-40 h-10 flex justify-center items-center text-[12px] rounded-lg bg-[#f1f1f1] text-[#3c3c3c] cursor-pointer duration-200 hover:bg-[#d2d2d2]'>취소</button>
