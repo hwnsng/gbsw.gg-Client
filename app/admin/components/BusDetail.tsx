@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ChevronLeft, Pencil, Check, X } from 'lucide-react';
 import api, { ApiResponse } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { Schedule } from '@/hooks/useSchedule';
 
 interface Props {
   busId: number;
@@ -34,9 +35,7 @@ interface BusMemberApi {
 interface BusInfo {
   id: number;
   busNumber: number;
-  leaderName?: string;
-  outboundLeaderName?: string;
-  inboundLeaderName?: string;
+  leaderName: string;
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -51,30 +50,29 @@ const STATUS_COLOR: Record<string, string> = {
   '미확인': 'text-[#3c3c3c]',
 };
 
-export default function BusDetail({ busId, onBack }: Props) {
+export default function BusDetail({ busId, leaderName: initialLeaderName, onBack }: Props) {
   const { showToast } = useToast();
   const [students, setStudents] = useState<StudentRecord[]>([]);
   const [busDbId, setBusDbId] = useState<number | null>(null);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
-  const [outboundLeaderName, setOutboundLeaderName] = useState('');
-  const [inboundLeaderName, setInboundLeaderName] = useState('');
-  const [isEditingOutbound, setIsEditingOutbound] = useState(false);
-  const [isEditingInbound, setIsEditingInbound] = useState(false);
-  const [outboundStudentNumber, setOutboundStudentNumber] = useState('');
-  const [inboundStudentNumber, setInboundStudentNumber] = useState('');
+  const [currentLeaderName, setCurrentLeaderName] = useState(initialLeaderName);
+  const [isEditing, setIsEditing] = useState(false);
+  const [studentNumber, setStudentNumber] = useState('');
   const [saving, setSaving] = useState(false);
+  const [scheduleType, setScheduleType] = useState<'OUTBOUND' | 'INBOUND' | null>(null);
+
+  useEffect(() => {
+    api.get<ApiResponse<Schedule>>('/api/schedules/active')
+      .then(res => { if (res.success) setScheduleType(res.data.type); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     api.get<ApiResponse<BusInfo[]>>('/api/buses')
       .then(res => {
         if (res.success) {
           const bus = res.data.find(b => b.busNumber === busId);
-          if (bus) {
-            setBusDbId(bus.id);
-            setOutboundLeaderName(bus.outboundLeaderName ?? bus.leaderName ?? '');
-            setInboundLeaderName(bus.inboundLeaderName ?? bus.leaderName ?? '');
-          }
+          if (bus) setBusDbId(bus.id);
         }
       })
       .catch(() => {});
@@ -106,35 +104,21 @@ export default function BusDetail({ busId, onBack }: Props) {
     showToast('복사되었습니다.', 'success');
   };
 
-  const refreshLeaders = async () => {
-    const busRes = await api.get<ApiResponse<BusInfo[]>>('/api/buses');
-    if (busRes.success) {
-      const bus = busRes.data.find(b => b.busNumber === busId);
-      if (bus) {
-        setOutboundLeaderName(bus.outboundLeaderName ?? bus.leaderName ?? '');
-        setInboundLeaderName(bus.inboundLeaderName ?? bus.leaderName ?? '');
-      }
-    }
-  };
-
-  const handleLeaderSave = async (type: 'OUTBOUND' | 'INBOUND') => {
-    if (!busDbId) return;
-    const studentNumber = type === 'OUTBOUND' ? outboundStudentNumber : inboundStudentNumber;
-    if (!studentNumber.trim()) return;
+  const handleLeaderSave = async () => {
+    if (!busDbId || !studentNumber.trim() || !scheduleType) return;
     setSaving(true);
     try {
       const res = await api.patch<ApiResponse>(
-        `/api/admin/buses/${busDbId}/leader?studentNumber=${encodeURIComponent(studentNumber.trim())}&type=${type}`
+        `/api/admin/buses/${busDbId}/leader?studentNumber=${encodeURIComponent(studentNumber.trim())}&type=${scheduleType}`
       );
       if (res.success) {
-        await refreshLeaders();
-        if (type === 'OUTBOUND') {
-          setIsEditingOutbound(false);
-          setOutboundStudentNumber('');
-        } else {
-          setIsEditingInbound(false);
-          setInboundStudentNumber('');
+        const busRes = await api.get<ApiResponse<BusInfo[]>>('/api/buses');
+        if (busRes.success) {
+          const bus = busRes.data.find(b => b.busNumber === busId);
+          if (bus) setCurrentLeaderName(bus.leaderName);
         }
+        setIsEditing(false);
+        setStudentNumber('');
       }
     } catch {
       // 에러 처리
@@ -148,41 +132,6 @@ export default function BusDetail({ busId, onBack }: Props) {
   const preAbsent = students.filter(s => s.status === 'PRE_ABSENT').length;
   const unknown = students.filter(s => s.status === 'ABSENT').length;
 
-  const renderLeaderRow = (type: 'OUTBOUND' | 'INBOUND') => {
-    const label = type === 'OUTBOUND' ? '귀가 도우미' : '귀교 도우미';
-    const isEditing = type === 'OUTBOUND' ? isEditingOutbound : isEditingInbound;
-    const studentNumber = type === 'OUTBOUND' ? outboundStudentNumber : inboundStudentNumber;
-    const leaderName = type === 'OUTBOUND' ? outboundLeaderName : inboundLeaderName;
-    const setIsEditing = type === 'OUTBOUND' ? setIsEditingOutbound : setIsEditingInbound;
-    const setStudentNumber = type === 'OUTBOUND' ? setOutboundStudentNumber : setInboundStudentNumber;
-
-    return isEditing ? (
-      <div className="flex flex-row items-center gap-2 mt-1">
-        <p className="text-[12px] text-[#747474] font-medium">{label}:</p>
-        <input
-          autoFocus
-          value={studentNumber}
-          onChange={e => setStudentNumber(e.target.value)}
-          placeholder="학번 입력"
-          className="h-7 border-b border-[#d2d2d2] outline-none text-[12px] text-[#3c3c3c] px-1 w-28 focus:border-[#02AB87]"
-        />
-        <button onClick={() => handleLeaderSave(type)} disabled={saving} className="cursor-pointer">
-          <Check size={16} color="#02AB87" />
-        </button>
-        <button onClick={() => { setIsEditing(false); setStudentNumber(''); }} className="cursor-pointer">
-          <X size={16} color="#747474" />
-        </button>
-      </div>
-    ) : (
-      <div className="flex flex-row items-center gap-2 mt-1">
-        <p className="text-[12px] text-[#747474] font-medium">{label}: {leaderName}</p>
-        <button onClick={() => setIsEditing(true)} className="cursor-pointer">
-          <Pencil size={12} color="#747474" />
-        </button>
-      </div>
-    );
-  };
-
   return (
     <div className="w-full h-auto p-6.25 bg-white flex flex-col">
       <div className="flex flex-row items-center gap-1 cursor-pointer w-fit mb-4" onClick={onBack}>
@@ -193,8 +142,31 @@ export default function BusDetail({ busId, onBack }: Props) {
       <div className="w-full h-auto px-6.25 py-5 bg-white flex flex-col rounded-[20px] shadow-sm">
         <p className="text-[#3c3c3c] text-[24px] font-bold">{busId}호차</p>
 
-        {renderLeaderRow('OUTBOUND')}
-        {renderLeaderRow('INBOUND')}
+        {isEditing ? (
+          <div className="flex flex-row items-center gap-2 mt-1">
+            <p className="text-[12px] text-[#747474] font-medium">대표자:</p>
+            <input
+              autoFocus
+              value={studentNumber}
+              onChange={e => setStudentNumber(e.target.value)}
+              placeholder="학번 입력"
+              className="h-7 border-b border-[#d2d2d2] outline-none text-[12px] text-[#3c3c3c] px-1 w-28 focus:border-[#02AB87]"
+            />
+            <button onClick={handleLeaderSave} disabled={saving} className="cursor-pointer">
+              <Check size={16} color="#02AB87" />
+            </button>
+            <button onClick={() => { setIsEditing(false); setStudentNumber(''); }} className="cursor-pointer">
+              <X size={16} color="#747474" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-row items-center gap-2 mt-1">
+            <p className="text-[12px] text-[#747474] font-medium">대표자: {currentLeaderName}</p>
+            <button onClick={() => setIsEditing(true)} className="cursor-pointer">
+              <Pencil size={12} color="#747474" />
+            </button>
+          </div>
+        )}
 
         <div className="w-full h-px bg-[#d2d2d2] my-5" />
 
