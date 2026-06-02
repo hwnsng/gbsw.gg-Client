@@ -270,28 +270,37 @@ export default function LeaderPage() {
                         return (
                           <div
                             key={member.studentId}
-                            className={`px-[20px] py-[16px] flex justify-between items-center ${
+                            className={`px-[20px] py-[18px] flex items-center gap-[8px] ${
                               index !== members.length - 1 ? "border-b border-[#F0F0F0]" : ""
                             }`}
                           >
-                            <div className="flex flex-col gap-[3px]">
+                            {/* 학생 정보 — 이름 / 학년반 / 정류장 */}
+                            <div className="flex-1 min-w-0 flex flex-col gap-[2px]">
                               <p className="text-[15px] font-bold text-[#3C3C3C]">{member.name}</p>
                               <p className="text-[12px] font-medium text-[#767676]">
                                 {member.grade}학년 {member.classNum}반
-                                {member.station && ` · ${member.station}`}
+                              </p>
+                              {member.station && (
+                                <p className="text-[12px] font-medium text-[#A0A0A0]">{member.station}</p>
+                              )}
+                            </div>
+                            {/* 전화번호 — 고정 너비 */}
+                            <div className="shrink-0 w-[96px] flex justify-center">
+                              {member.phone && (
+                                <button
+                                  onClick={copyPhone}
+                                  className="text-[11px] font-medium text-[#767676] active:opacity-50 transition-opacity"
+                                >
+                                  {member.phone}
+                                </button>
+                              )}
+                            </div>
+                            {/* 상태 — 고정 너비 */}
+                            <div className="shrink-0 w-[56px] flex justify-end">
+                              <p className="text-[13px] font-semibold text-right" style={{ color: STATUS_COLOR[label] }}>
+                                {label}
                               </p>
                             </div>
-                            {member.phone && (
-                              <button
-                                onClick={copyPhone}
-                                className="text-[12px] font-medium text-[#767676] active:opacity-50 transition-opacity mx-[8px]"
-                              >
-                                {member.phone}
-                              </button>
-                            )}
-                            <p className="text-[13px] font-semibold" style={{ color: STATUS_COLOR[label] }}>
-                              {label}
-                            </p>
                           </div>
                         );
                       })}
