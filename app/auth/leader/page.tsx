@@ -285,7 +285,7 @@ export default function LeaderPage() {
                               )}
                             </div>
                             {/* 전화번호 — 고정 너비 */}
-                            <div className="shrink-0 w-[96px] flex justify-center">
+                            <div className="shrink-0 w-[88px] flex justify-center">
                               {member.phone && (
                                 <button
                                   onClick={copyPhone}
@@ -296,8 +296,8 @@ export default function LeaderPage() {
                               )}
                             </div>
                             {/* 상태 — 고정 너비 */}
-                            <div className="shrink-0 w-[56px] flex justify-end">
-                              <p className="text-[13px] font-semibold text-right" style={{ color: STATUS_COLOR[label] }}>
+                            <div className="shrink-0 w-[72px] flex justify-end">
+                              <p className="text-[12px] font-semibold text-right whitespace-nowrap" style={{ color: STATUS_COLOR[label] }}>
                                 {label}
                               </p>
                             </div>
