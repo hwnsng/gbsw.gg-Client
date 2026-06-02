@@ -278,6 +278,7 @@ export default function LeaderPage() {
                               <p className="text-[15px] font-bold text-[#3C3C3C]">{member.name}</p>
                               <p className="text-[12px] font-medium text-[#767676]">
                                 {member.grade}학년 {member.classNum}반
+                                {member.station && ` · ${member.station}`}
                               </p>
                             </div>
                             {member.phone && (

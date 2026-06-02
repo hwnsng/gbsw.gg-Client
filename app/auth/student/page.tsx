@@ -48,6 +48,7 @@ export default function StudentPage() {
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [busLabel, setBusLabel] = useState<string>("-");
   const [currentBusNumber, setCurrentBusNumber] = useState<number | null>(null);
+  const [currentStation, setCurrentStation] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<StatusType>("미확인");
   const [timestamp, setTimestamp] = useState<string | undefined>(undefined);
   const [absentReason, setAbsentReason] = useState<string | undefined>(undefined);
@@ -78,6 +79,7 @@ export default function StudentPage() {
       if (myStatus) {
         setBusLabel(`${myStatus.busNumber}호차`);
         setCurrentBusNumber(myStatus.busNumber);
+        setCurrentStation(myStatus.station);
       }
 
       const boarding = await getMyBoarding();
@@ -271,6 +273,7 @@ export default function StudentPage() {
           onSuccess={fetchRequests}
           scheduleType={schedule?.type ?? "OUTBOUND"}
           currentBusNumber={currentBusNumber ?? undefined}
+          currentStation={currentStation}
         />
       )}
 
